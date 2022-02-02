@@ -1,25 +1,56 @@
-import logo from './logo.svg';
-import './App.css';
+import photos from './photo';
+import styled from 'styled-components';
+import {motion} from 'framer-motion';
+import {useRef, useEffect, useState} from 'react';
 
 function App() {
+
+  const [width, setwidth] = useState(0);
+  const carousel = useRef();
+
+  useEffect(() => {
+    setwidth(carousel.current.scrollWidth - carousel.current.offsetWidth);
+  
+  }, []);
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Carousel ref={carousel} whileTap={{cursor: 'grabbing'}}>
+         <InnerCarousel drag='x' 
+            dragConstraints={{right: 0, left: -width}}
+         >
+           {photos.map(photo => {
+             return(
+               <Item key={photo}>
+                <img src={photo} alt={photo} />
+               </Item>
+             )
+           })}
+         </InnerCarousel>
+    </Carousel>
   );
 }
 
 export default App;
+
+
+
+const Carousel = styled(motion.div) `
+  cursor: grab;
+  overflow: hidden;
+`;
+
+const InnerCarousel = styled(motion.div) `
+    display: flex;
+`;
+
+const Item = styled(motion.div) `
+    min-height: 20rem;
+    min-width: 20rem;
+    padding: 20px;
+    img{
+      width: 100%;
+      height: 100%;
+      border-radius: 2rem;
+      pointer-events: none;
+    }
+`;
